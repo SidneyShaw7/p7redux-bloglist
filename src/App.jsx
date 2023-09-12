@@ -2,16 +2,19 @@ import { useState, useEffect } from 'react';
 import Blog from './components/Blog';
 import blogService from './services/blogs';
 import loginService from './services/login';
+import LoginForm from './components/LoginForm';
 
 const App = () => {
   const [blogs, setBlogs] = useState([]);
-  const [errorMessage, setErrorMessage] = useState(null);
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [user, setUser] = useState(null);
   const [title, setTitle] = useState('');
   const [author, setAuthor] = useState('');
   const [url, setUrl] = useState('');
+  const [notification, setNotification] = useState(null);
+  const [style, setStyle] = useState(true);
+  const [loginVisible, setLoginVisible] = useState(false);
 
   useEffect(() => {
     if (user) {
@@ -48,88 +51,78 @@ const App = () => {
       setUsername('');
       setPassword('');
     } catch (exception) {
-      setErrorMessage('Wrong credentials');
+      setStyle(false);
+      setNotification('Wrong credentials');
       setTimeout(() => {
-        setErrorMessage(null);
-      }, 5000);
+        setNotification(null);
+      }, 3500);
     }
   };
 
-  // const handleCreate = async (e) => {
-  //   e.preventDefault();
+  const addBlog = async (e) => {
+    e.preventDefault();
 
-  //   try {
-  //     blogService.create({
-  //       title,
-  //       author,
-  //       url,
-  //     });
+    const blogObj = {
+      title,
+      author,
+      url,
+    };
+    try {
+      blogService.create(blogObj);
+      setBlogs(blogs.concat(blogObj));
 
-  //     setTitle('');
-  //     setAuthor('');
-  //     setUrl('');
-  //   } catch (exception) {}
-  // };
+      setTitle('');
+      setAuthor('');
+      setUrl('');
+      setStyle(true);
+      setNotification(`a new blog ${blogObj.title} by ${blogObj.author} added`);
+      setTimeout(() => {
+        setNotification(null);
+      }, 3500);
+    } catch (exception) {
+      // setErrorMessage('Wrong');
+      // setTimeout(() => {
+      //   setErrorMessage(null);
+      // }, 5000);
+    }
+  };
 
-  // const loginForm = () => {
-  //   <form onSubmit={handleLogin}>
-  //     <div>
-  //       username
-  //       <input
-  //         type='text'
-  //         value={username}
-  //         name='Username'
-  //         onChange={({ target }) => setUsername(target.value)}
-  //       />
-  //     </div>
-  //     <div>
-  //       password
-  //       <input
-  //         type='password'
-  //         value={password}
-  //         name='Password'
-  //         onChange={({ target }) => setPassword(target.value)}
-  //       />
-  //     </div>
-  //     <button type='submit'>login</button>
-  //   </form>;
-  // };
+  const Notification = ({ notification, style }) => {
+    return notification === null ? null : (
+      <div className={style ? 'success' : 'error'}>{notification}</div>
+    );
+  };
+
+  const loginForm = () => {
+    const hideWhenVisible = { display: loginVisible ? 'none' : '' };
+    const showWhenVisible = { display: loginVisible ? '' : 'none' };
+
+    return (
+      <div>
+        <div style={hideWhenVisible}>
+          <button onClick={() => setLoginVisible(true)}>log in</button>
+        </div>
+        <div></div>
+      </div>
+    );
+  };
 
   if (!user) {
     return (
       <div>
         <h2>Log in to application</h2>
-        <form onSubmit={handleLogin}>
-          <div>
-            username
-            <input
-              type='text'
-              value={username}
-              name='Username'
-              onChange={({ target }) => setUsername(target.value)}
-            />
-          </div>
-          <div>
-            password
-            <input
-              type='password'
-              value={password}
-              name='Password'
-              onChange={({ target }) => setPassword(target.value)}
-            />
-          </div>
-          <button type='submit'>login</button>
-        </form>
+        <Notification notification={notification} style={style} />
       </div>
     );
   }
   return (
     <div>
       <h2>blogs</h2>
+      <Notification notification={notification} style={style} />
       <p>
         {user.username} logged in<button onClick={handleLogout}>logout</button>
       </p>
-      <form onSubmit={handleLogin}>
+      <form onSubmit={addBlog}>
         <div>
           title:
           <input
