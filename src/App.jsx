@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Blog from './components/Blog';
 import blogService from './services/blogs';
 import loginService from './services/login';
@@ -9,14 +9,18 @@ import Notification from './components/Notification';
 
 const App = () => {
   const [blogs, setBlogs] = useState([]);
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
   const [user, setUser] = useState(null);
-  const [title, setTitle] = useState('');
-  const [author, setAuthor] = useState('');
-  const [url, setUrl] = useState('');
   const [notification, setNotification] = useState(null);
   const [style, setStyle] = useState(true);
+
+  useEffect(() => {
+    const loggedUserJSON = window.localStorage.getItem('loggedBlogappUser');
+    if (loggedUserJSON) {
+      const loggedUser = JSON.parse(loggedUserJSON);
+      setUser(loggedUser);
+      blogService.setToken(loggedUser.token);
+    }
+  }, []);
 
   useEffect(() => {
     if (user) {
@@ -24,34 +28,20 @@ const App = () => {
     }
   }, [user]);
 
-  useEffect(() => {
-    const loggedUserJSON = window.localStorage.getItem('loggedBlogappUser');
-    if (loggedUserJSON) {
-      const user = JSON.parse(loggedUserJSON);
-      setUser(user);
-      blogService.setToken(user.token);
-    }
-  }, []);
-
   const handleLogout = () => {
     window.localStorage.removeItem('loggedBlogappUser');
     window.location.reload();
   };
 
-  const handleLogin = async (e) => {
-    e.preventDefault();
-
+  const handleLogin = async (user) => {
     try {
-      const user = await loginService.login({
-        username,
-        password,
-      });
-
-      window.localStorage.setItem('loggedBlogappUser', JSON.stringify(user));
-      blogService.setToken(user.token);
-      setUser(user);
-      setUsername('');
-      setPassword('');
+      const loggedUser = await loginService.login(user);
+      window.localStorage.setItem(
+        'loggedBlogappUser',
+        JSON.stringify(loggedUser)
+      );
+      setUser(loggedUser);
+      blogService.setToken(loggedUser.token);
     } catch (exception) {
       setStyle(false);
       setNotification('Wrong credentials');
@@ -61,22 +51,28 @@ const App = () => {
     }
   };
 
+  const blogFormRef = useRef();
+
   const addBlog = async (blogObj) => {
-    blogService.create(blogObj);
-    setBlogs(blogs.concat(blogObj));
+    try {
+      await blogService.create(blogObj);
+      setBlogs((prevBlogs) => [...prevBlogs, blogObj]);
+      blogFormRef.current.toggleVisibility();
+    } catch (error) {
+      console.error('An error occurred while creating the blog:', error);
+      setStyle(false);
+      setNotification('An error occurred while creating the blog');
+      setTimeout(() => {
+        setNotification(null);
+      }, 3500);
+    }
   };
 
   if (!user) {
     return (
       <div>
         <Notification notification={notification} style={style} />
-        <LoginForm
-          handleSubmit={handleLogin}
-          handleUsernameChange={({ target }) => setUsername(target.value)}
-          handlePasswordChange={({ target }) => setPassword(target.value)}
-          username={username}
-          password={password}
-        />
+        <LoginForm handleLogin={handleLogin} user={user} setUser={setUser} />
       </div>
     );
   }
@@ -87,11 +83,11 @@ const App = () => {
       <p>
         {user.username} logged in<button onClick={handleLogout}>logout</button>
       </p>
-      <Togglable buttonLabel='new blog'>
+      <Togglable buttonLabel='new blog' ref={blogFormRef}>
         <BlogForm createBlog={addBlog} />
       </Togglable>
       {blogs.map((blog) => (
-        <Blog key={blog.id} blog={blog} />
+        <Blog user={user} key={blog.id} blog={blog} />
       ))}
     </div>
   );
