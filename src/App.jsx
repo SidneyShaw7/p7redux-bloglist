@@ -13,6 +13,8 @@ const App = () => {
   const [notification, setNotification] = useState(null);
   const [style, setStyle] = useState(true);
 
+  // USE EFFECTS
+
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem('loggedBlogappUser');
     if (loggedUserJSON) {
@@ -28,9 +30,17 @@ const App = () => {
     }
   }, [user]);
 
-  const handleLogout = () => {
-    window.localStorage.removeItem('loggedBlogappUser');
-    window.location.reload();
+  const blogFormRef = useRef();
+
+  const sortedBlogs = blogs.toSorted((a, b) => b.likes - a.likes);
+
+  const handleError = (error, setStyle, setNotification) => {
+    console.error(error);
+    setStyle(false);
+    setNotification(`An error occurred: ${error}`);
+    setTimeout(() => {
+      setNotification(null);
+    }, 3500);
   };
 
   const handleLogin = async (user) => {
@@ -42,29 +52,47 @@ const App = () => {
       );
       setUser(loggedUser);
       blogService.setToken(loggedUser.token);
-    } catch (exception) {
-      setStyle(false);
-      setNotification('Wrong credentials');
-      setTimeout(() => {
-        setNotification(null);
-      }, 3500);
+    } catch (error) {
+      handleError(error, setStyle, setNotification);
     }
   };
 
-  const blogFormRef = useRef();
+  const handleLogout = () => {
+    window.localStorage.removeItem('loggedBlogappUser');
+    window.location.reload();
+  };
 
   const addBlog = async (blogObj) => {
     try {
       await blogService.create(blogObj);
-      setBlogs((prevBlogs) => [...prevBlogs, blogObj]);
       blogFormRef.current.toggleVisibility();
+      const newBlogs = await blogService.getAll();
+      setBlogs(newBlogs);
     } catch (error) {
-      console.error('An error occurred while creating the blog:', error);
-      setStyle(false);
-      setNotification('An error occurred while creating the blog');
-      setTimeout(() => {
-        setNotification(null);
-      }, 3500);
+      handleError(error, setStyle, setNotification);
+    }
+  };
+
+  const likeIt = async (id) => {
+    const blog = blogs.find((b) => b.id === id);
+    const likedBlog = { ...blog, likes: blog.likes + 1 };
+    try {
+      const returnedBlog = await blogService.update(id, likedBlog);
+      setBlogs(blogs.map((blog) => (blog.id !== id ? blog : returnedBlog)));
+    } catch (error) {
+      handleError(error, setStyle, setNotification);
+    }
+  };
+
+  const remove = async (id) => {
+    const blog = blogs.find((b) => b.id === id);
+    if (window.confirm(`Remove the blog "${blog.title}"`)) {
+      try {
+        await blogService.remove(id);
+        setBlogs(blogs.filter((blog) => blog.id !== id));
+      } catch (error) {
+        handleError(error, setStyle, setNotification);
+      }
     }
   };
 
@@ -86,8 +114,14 @@ const App = () => {
       <Togglable buttonLabel='new blog' ref={blogFormRef}>
         <BlogForm createBlog={addBlog} />
       </Togglable>
-      {blogs.map((blog) => (
-        <Blog user={user} key={blog.id} blog={blog} />
+      {sortedBlogs.map((blog) => (
+        <Blog
+          user={user}
+          key={blog.id}
+          blog={blog}
+          likeIt={() => likeIt(blog.id)}
+          remove={() => remove(blog.id)}
+        />
       ))}
     </div>
   );
