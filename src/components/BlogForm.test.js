@@ -23,5 +23,7 @@ test('<BlogForm /> calls the event handler it received as props with the right d
 
   //   screen.debug()
   expect(createBlog.mock.calls).toHaveLength(1)
-  expect(createBlog.mock.calls[0][0].content).toBe('testing title')
+  expect(createBlog.mock.calls[0][0].title).toBe('testing title')
+  expect(createBlog.mock.calls[0][0].author).toBe('testing author')
+  expect(createBlog.mock.calls[0][0].url).toBe('testing url')
 })
