@@ -31,13 +31,21 @@ const App = () => {
   }, [user])
 
   const blogFormRef = useRef()
+  // const loginFormRef = useRef()
 
   const sortedBlogs = blogs.toSorted((a, b) => b.likes - a.likes)
 
   const handleError = (error, setStyle, setNotification) => {
     console.error(error)
     setStyle(false)
-    setNotification(`An error occurred: ${error}`)
+
+    const message =
+      error.response.request.status === 401
+        ? 'Wrong credentials'
+        : error.message
+
+    setNotification(message)
+
     setTimeout(() => {
       setNotification(null)
     }, 3500)
@@ -96,24 +104,37 @@ const App = () => {
     }
   }
 
-  if (!user) {
+  const loginForm = () => (
+    <LoginForm handleLogin={handleLogin} user={user} setUser={setUser} />
+  )
+
+  const blogForm = () => {
     return (
-      <div>
-        <Notification notification={notification} style={style} />
-        <LoginForm handleLogin={handleLogin} user={user} setUser={setUser} />
-      </div>
+      <>
+        {' '}
+        <p>
+          {user.username} logged in
+          <button onClick={handleLogout}>logout</button>
+        </p>
+        <Togglable buttonLabel='new blog' ref={blogFormRef}>
+          <BlogForm createBlog={addBlog} />
+        </Togglable>
+      </>
     )
   }
+
   return (
     <div>
-      <h2>blogs</h2>
       <Notification notification={notification} style={style} />
-      <p>
+      {!user && loginForm()}
+      <h2>blogs</h2>
+      {user && blogForm()}
+      {/* <p>
         {user.username} logged in<button onClick={handleLogout}>logout</button>
       </p>
       <Togglable buttonLabel='new blog' ref={blogFormRef}>
         <BlogForm createBlog={addBlog} />
-      </Togglable>
+      </Togglable> */}
       {sortedBlogs.map((blog) => (
         <Blog
           user={user}
