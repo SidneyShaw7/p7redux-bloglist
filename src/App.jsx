@@ -25,10 +25,10 @@ const App = () => {
   }, [])
 
   useEffect(() => {
-    if (user) {
+    {
       blogService.getAll().then((blogs) => setBlogs(blogs))
     }
-  }, [user])
+  }, [])
 
   const blogFormRef = useRef()
   // const loginFormRef = useRef()
@@ -59,6 +59,7 @@ const App = () => {
         JSON.stringify(loggedUser)
       )
       setUser(loggedUser)
+      console.log(user), console.log(loggedUser)
       blogService.setToken(loggedUser.token)
     } catch (error) {
       handleError(error, setStyle, setNotification)
@@ -87,6 +88,7 @@ const App = () => {
     try {
       const returnedBlog = await blogService.update(id, likedBlog)
       setBlogs(blogs.map((blog) => (blog.id !== id ? blog : returnedBlog)))
+      console.log(blog), console.log(returnedBlog)
     } catch (error) {
       handleError(error, setStyle, setNotification)
     }

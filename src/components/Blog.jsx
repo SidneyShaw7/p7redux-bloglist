@@ -10,32 +10,51 @@ const Blog = ({ blog, user, likeIt, remove }) => {
     marginBottom: 5,
   }
   const [view, setView] = useState(false)
+
   const expand = () => {
     setView(!view)
   }
 
-  if (!view) {
+  const interaction = () => {
     return (
-      <div style={blogStyle}>
-        {blog.title} {blog.author}
-        <button onClick={expand}>view</button>
-      </div>
+      <>
+        <button onClick={likeIt}>like</button> <br />
+        {(blog.user === user.id || blog.user.id === user.id) && (
+          <button onClick={remove}>remove</button>
+        )}
+        {(console.log(blog), console.log(user))}
+      </>
     )
   }
+
+  const expandView = () => {
+    return (
+      <>
+        {view ? (
+          <>
+            <button onClick={expand}>hide</button>
+            <br /> {blog.url} <br /> likes: {blog.likes}
+            {user && interaction()}
+          </>
+        ) : (
+          <button onClick={expand}>view</button>
+        )}
+      </>
+    )
+  }
+
   return (
     <div className='blog' style={blogStyle}>
       {blog.title} {blog.author}
-      <button onClick={expand}>hide</button>
-      <br /> {blog.url} <br /> likes: {blog.likes}
-      <button onClick={likeIt}>like</button> <br /> {user.name} <br />
-      <button onClick={remove}>remove</button>
+      {expandView()}
+      {/* {user && view && interaction()} */}
     </div>
   )
 }
 
 Blog.propTypes = {
   blog: PropTypes.object.isRequired,
-  user: PropTypes.object.isRequired,
+  // user: PropTypes.object.isRequired,
   likeIt: PropTypes.func.isRequired,
   remove: PropTypes.func.isRequired,
 }
