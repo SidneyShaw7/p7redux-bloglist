@@ -19,10 +19,12 @@ const Blog = ({ blog, user, likeIt, remove }) => {
     return (
       <>
         <button onClick={likeIt}>like</button> <br />
+        {blog.user.name} <br />
         {(blog.user === user.id || blog.user.id === user.id) && (
-          <button onClick={remove}>remove</button>
+          <button id={remove} onClick={remove}>
+            remove
+          </button>
         )}
-        {(console.log(blog), console.log(user))}
       </>
     )
   }
@@ -47,7 +49,6 @@ const Blog = ({ blog, user, likeIt, remove }) => {
     <div className='blog' style={blogStyle}>
       {blog.title} {blog.author}
       {expandView()}
-      {/* {user && view && interaction()} */}
     </div>
   )
 }

@@ -31,7 +31,6 @@ const App = () => {
   }, [])
 
   const blogFormRef = useRef()
-  // const loginFormRef = useRef()
 
   const sortedBlogs = blogs.toSorted((a, b) => b.likes - a.likes)
 
@@ -59,7 +58,6 @@ const App = () => {
         JSON.stringify(loggedUser)
       )
       setUser(loggedUser)
-      console.log(user), console.log(loggedUser)
       blogService.setToken(loggedUser.token)
     } catch (error) {
       handleError(error, setStyle, setNotification)
@@ -131,12 +129,6 @@ const App = () => {
       {!user && loginForm()}
       <h2>blogs</h2>
       {user && blogForm()}
-      {/* <p>
-        {user.username} logged in<button onClick={handleLogout}>logout</button>
-      </p>
-      <Togglable buttonLabel='new blog' ref={blogFormRef}>
-        <BlogForm createBlog={addBlog} />
-      </Togglable> */}
       {sortedBlogs.map((blog) => (
         <Blog
           user={user}
