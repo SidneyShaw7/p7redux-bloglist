@@ -5,22 +5,32 @@ const blogSlice = createSlice({
   name: 'blogs',
   initialState: [],
   reducers: {
-    createBlog(state, action) {
-      const { title, author, url } = action.payload
-      state.push({
-        title,
-        author,
-        url,
-      })
-    },
     appendBlog(state, action) {
       state.push(action.payload)
     },
     setBlogs(state, action) {
       return action.payload
     },
+    likeBlog(state, action) {},
+    removeBlog(state, action) {
+      const id = action.payload
+      return state.filter((b) => b.id !== id)
+    },
   },
 })
+
+// const remove = async (id) => {
+//   const blog = blogs.find((b) => b.id === id)
+//   if (window.confirm(`Remove the blog "${blog.title}"`)) {
+//     try {
+//       await blogService.remove(id)
+//       setBlogs(blogs.filter((blog) => blog.id !== id))
+//       dispatch(setNotification('blog was deleted', 3))
+//     } catch (error) {
+//       handleError(error, setStyle, setNotification)
+//     }
+//   }
+// }
 
 export const initializeBlogs = () => {
   return async (dispatch) => {
@@ -29,5 +39,19 @@ export const initializeBlogs = () => {
   }
 }
 
-export const { appendBlog, setBlogs } = blogSlice.actions
+export const createBlog = ({ title, author, url }) => {
+  return async (dispatch) => {
+    const newBlog = await blogService.create({ title, author, url })
+    dispatch(appendBlog(newBlog))
+  }
+}
+
+export const deleteBlog = (id) => {
+  return async (dispatch) => {
+    await blogService.remove(id)
+    dispatch(removeBlog(id))
+  }
+}
+
+export const { appendBlog, setBlogs, removeBlog } = blogSlice.actions
 export default blogSlice.reducer
