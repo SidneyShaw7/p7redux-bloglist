@@ -11,26 +11,21 @@ const blogSlice = createSlice({
     setBlogs(state, action) {
       return action.payload
     },
-    likeBlog(state, action) {},
+    likeBlog(state, action) {
+      const id = action.payload
+      const blogToLike = state.find((b) => b.id === id)
+      const likedBlog = { ...blogToLike, likes: blogToLike.likes + 1 }
+      return async () => {
+        await blogService.update(id, likedBlog)
+        state.map((blog) => (blog.id !== id ? blog : likedBlog))
+      }
+    },
     removeBlog(state, action) {
       const id = action.payload
       return state.filter((b) => b.id !== id)
     },
   },
 })
-
-// const remove = async (id) => {
-//   const blog = blogs.find((b) => b.id === id)
-//   if (window.confirm(`Remove the blog "${blog.title}"`)) {
-//     try {
-//       await blogService.remove(id)
-//       setBlogs(blogs.filter((blog) => blog.id !== id))
-//       dispatch(setNotification('blog was deleted', 3))
-//     } catch (error) {
-//       handleError(error, setStyle, setNotification)
-//     }
-//   }
-// }
 
 export const initializeBlogs = () => {
   return async (dispatch) => {
@@ -53,5 +48,25 @@ export const deleteBlog = (id) => {
   }
 }
 
-export const { appendBlog, setBlogs, removeBlog } = blogSlice.actions
+// const likeIt = async (id) => {
+//   const blog = blogs.find((b) => b.id === id)
+//   const likedBlog = { ...blog, likes: blog.likes + 1 }
+//   try {
+//     const returnedBlog = await blogService.update(id, likedBlog)
+//     setBlogs(blogs.map((blog) => (blog.id !== id ? blog : returnedBlog)))
+//     dispatch(setNotification('you liked the blog', 3))
+//     console.log(blog), console.log(returnedBlog)
+//   } catch (error) {
+//     handleError(error, setStyle, setNotification)
+//   }
+// }
+
+// export const likeBlog = (id) => {
+//   return async (dispatch) => {
+//     const
+//     await blogService.update
+//   }
+// }
+
+export const { appendBlog, setBlogs, removeBlog, likeBlog } = blogSlice.actions
 export default blogSlice.reducer
