@@ -11,14 +11,11 @@ const blogSlice = createSlice({
     setBlogs(state, action) {
       return action.payload
     },
-    likeBlog(state, action) {
-      const id = action.payload
-      const blogToLike = state.find((b) => b.id === id)
-      const likedBlog = { ...blogToLike, likes: blogToLike.likes + 1 }
-      return async () => {
-        await blogService.update(id, likedBlog)
-        state.map((blog) => (blog.id !== id ? blog : likedBlog))
-      }
+    updateBlog(state, action) {
+      const updatedBlog = action.payload
+      return state.map((blog) =>
+        blog.id !== updatedBlog.id ? blog : updatedBlog
+      )
     },
     removeBlog(state, action) {
       const id = action.payload
@@ -36,37 +33,38 @@ export const initializeBlogs = () => {
 
 export const createBlog = ({ title, author, url }) => {
   return async (dispatch) => {
-    const newBlog = await blogService.create({ title, author, url })
-    dispatch(appendBlog(newBlog))
+    try {
+      const newBlog = await blogService.create({ title, author, url })
+      dispatch(appendBlog(newBlog))
+    } catch (error) {
+      console.error(error)
+    }
   }
 }
 
 export const deleteBlog = (id) => {
   return async (dispatch) => {
-    await blogService.remove(id)
-    dispatch(removeBlog(id))
+    try {
+      await blogService.remove(id)
+      dispatch(removeBlog(id))
+    } catch (error) {
+      console.error(error)
+    }
   }
 }
 
-// const likeIt = async (id) => {
-//   const blog = blogs.find((b) => b.id === id)
-//   const likedBlog = { ...blog, likes: blog.likes + 1 }
-//   try {
-//     const returnedBlog = await blogService.update(id, likedBlog)
-//     setBlogs(blogs.map((blog) => (blog.id !== id ? blog : returnedBlog)))
-//     dispatch(setNotification('you liked the blog', 3))
-//     console.log(blog), console.log(returnedBlog)
-//   } catch (error) {
-//     handleError(error, setStyle, setNotification)
-//   }
-// }
+export const likeBlog = (blog) => {
+  return async (dispatch) => {
+    const likedBlog = { ...blog, likes: blog.likes + 1 }
+    try {
+      await blogService.update(blog.id, likedBlog)
+      dispatch(updateBlog(likedBlog))
+    } catch (error) {
+      console.error(error)
+    }
+  }
+}
 
-// export const likeBlog = (id) => {
-//   return async (dispatch) => {
-//     const
-//     await blogService.update
-//   }
-// }
-
-export const { appendBlog, setBlogs, removeBlog, likeBlog } = blogSlice.actions
+export const { appendBlog, setBlogs, removeBlog, updateBlog } =
+  blogSlice.actions
 export default blogSlice.reducer

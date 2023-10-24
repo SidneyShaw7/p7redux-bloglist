@@ -1,5 +1,5 @@
 import { useDispatch, useSelector } from 'react-redux'
-import { deleteBlog, likeBlog } from '../reducers/blogReducer'
+import { deleteBlog, likeBlog, updateBlog } from '../reducers/blogReducer'
 
 const Blog = ({ blog, handleDelete, handleLike }) => {
   const blogStyle = {
@@ -12,7 +12,6 @@ const Blog = ({ blog, handleDelete, handleLike }) => {
   return (
     <div style={blogStyle}>
       <div>{blog.title}</div>
-
       <div>{blog.author}</div>
       <div>{blog.url}</div>
       <div>
@@ -37,7 +36,7 @@ const Blogs = () => {
               key={blog.id}
               blog={blog}
               handleDelete={() => dispatch(deleteBlog(blog.id))}
-              handleLike={() => dispatch(likeBlog(blog.id))}
+              handleLike={() => dispatch(likeBlog(blog))}
             />
           </div>
         )
