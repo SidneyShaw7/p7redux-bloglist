@@ -9,16 +9,25 @@ const Blog = ({ blog, handleDelete, handleLike }) => {
     borderWidth: 1,
     marginBottom: 5,
   }
-  return (
+
+  const user = useSelector((state) => state.login)
+  return user ? (
     <div style={blogStyle}>
       <div>{blog.title}</div>
       <div>{blog.author}</div>
       <div>{blog.url}</div>
       <div>
-        {blog.likes}
+        likes: {blog.likes}
         <button onClick={handleLike}>like</button>
       </div>
       <button onClick={handleDelete}>delete</button>
+    </div>
+  ) : (
+    <div style={blogStyle}>
+      <div>{blog.title}</div>
+      <div>{blog.author}</div>
+      <div>{blog.url}</div>
+      <div>likes: {blog.likes}</div>
     </div>
   )
 }
@@ -29,6 +38,7 @@ const Blogs = () => {
   const blogs = useSelector((state) => state.blogs)
   return (
     <div>
+      <h2>blogs</h2>
       {blogs.map((blog) => {
         return (
           <div key={blog.id}>

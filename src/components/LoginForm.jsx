@@ -1,8 +1,7 @@
-import { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { login } from '../reducers/loginReducer'
+import { login, logout } from '../reducers/loginReducer'
 
-const LoginForm = ({ handleLogin }) => {
+const LoginForm = () => {
   const dispatch = useDispatch()
 
   const loginUser = (e) => {
@@ -14,6 +13,11 @@ const LoginForm = ({ handleLogin }) => {
     e.target.password.value = ''
 
     dispatch(login({ username, password }))
+  }
+
+  const logoutUser = (e) => {
+    e.preventDefault()
+    dispatch(logout())
   }
 
   const user = useSelector((state) => state.login)
@@ -36,7 +40,10 @@ const LoginForm = ({ handleLogin }) => {
     </div>
   ) : (
     <div>
-      {user.username} is logged in{console.log(user)}
+      {user.username} is logged in
+      <button type='submit' onClick={logoutUser}>
+        logout
+      </button>
     </div>
   )
 }
