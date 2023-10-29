@@ -33,7 +33,7 @@ const NewBlog = () => {
         url:
         <input name='url' />
       </div>
-      <button type='submit'>add</button>
+      <button type='submit'>create</button>
     </form>
   )
 }

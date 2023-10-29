@@ -5,13 +5,30 @@ import LoginForm from './components/LoginForm'
 import Notification from './components/Notification'
 import { useDispatch, useSelector } from 'react-redux'
 import { initializeBlogs } from './reducers/blogReducer'
+import { initializeUsers } from './reducers/userReducer'
 import Blogs from './components/Blogs'
 import NewBlog from './components/NewBlog'
 import { setStoredUser } from './reducers/loginReducer'
+import Users from './components/Users'
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Link,
+  useParams,
+  useMatch,
+} from 'react-router-dom'
+import User from './components/User'
 
 const App = () => {
   const dispatch = useDispatch()
-  const user = useSelector((state) => state.login)
+  // const user = useSelector((state) => state.login)
+  const users = useSelector((state) => state.users)
+
+  const match = useMatch('/notes/:id')
+  const user = match
+    ? users.find((user) => user.id === Number(match.params.id))
+    : null
 
   // USE EFFECTS
 
@@ -26,6 +43,7 @@ const App = () => {
 
   useEffect(() => {
     dispatch(initializeBlogs())
+    dispatch(initializeUsers())
   }, [dispatch])
 
   const blogFormRef = useRef()
@@ -34,7 +52,7 @@ const App = () => {
     return (
       user && (
         <div>
-          <Togglable buttonLabel='new blog' ref={blogFormRef}>
+          <Togglable buttonLabel='create new blog' ref={blogFormRef}>
             <NewBlog />
           </Togglable>
         </div>
@@ -48,7 +66,12 @@ const App = () => {
       <Notification />
       <LoginForm />
       {blogForm()}
-      <Blogs />
+      <Users />
+      {/* <Blogs /> */}
+      <Routes>
+        <Route path='/users/:id' element={<User />} />
+        <Route path='/users/' element={<User />} />
+      </Routes>
     </div>
   )
 }

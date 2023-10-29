@@ -21,7 +21,6 @@ const LoginForm = () => {
   }
 
   const user = useSelector((state) => state.login)
-  console.log(user)
 
   return !user ? (
     <div>
@@ -41,9 +40,11 @@ const LoginForm = () => {
   ) : (
     <div>
       {user.username} is logged in
-      <button type='submit' onClick={logoutUser}>
-        logout
-      </button>
+      <div>
+        <button type='submit' onClick={logoutUser}>
+          logout
+        </button>
+      </div>
     </div>
   )
 }
