@@ -1,5 +1,5 @@
 import { useSelector } from 'react-redux'
-import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 
 const Users = () => {
   const users = useSelector((state) => state.users)

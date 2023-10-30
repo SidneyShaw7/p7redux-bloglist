@@ -1,34 +1,39 @@
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
+import { useParams } from 'react-router-dom'
+import { deleteBlog, likeBlog } from '../reducers/blogReducer'
 
-const Blog = ({ blog, handleDelete, handleLike }) => {
-  const blogStyle = {
-    paddingTop: 10,
-    paddingLeft: 2,
-    border: 'solid',
-    borderWidth: 1,
-    marginBottom: 5,
+const Blog = () => {
+  const dispatch = useDispatch()
+
+  const blogs = useSelector((state) => state.blogs)
+  const user = useSelector((state) => state.login)
+
+  const id = useParams().id
+  const blog = blogs.find((u) => u.id === id)
+
+  if (!blog) {
+    return <div>Blog not found</div>
   }
 
-  const user = useSelector((state) => state.login)
   return user ? (
-    <div style={blogStyle}>
-      <div>{blog.title}</div>
-      <div>{blog.author}</div>
+    <div>
+      <h2>{blog.title}</h2>
       <div>{blog.url}</div>
       <div>
         likes: {blog.likes}
-        <button onClick={handleLike}>like</button>
+        <button onClick={() => dispatch(likeBlog(blog))}>like</button>
       </div>
+      <div>added by {blog.author}</div>
       {user.id === blog.user.id && (
-        <button onClick={handleDelete}>delete</button>
+        <button onClick={() => dispatch(deleteBlog(blog.id))}>delete</button>
       )}
     </div>
   ) : (
-    <div style={blogStyle}>
-      <div>{blog.title}</div>
-      <div>{blog.author}</div>
+    <div>
+      <h2>{blog.title}</h2>
       <div>{blog.url}</div>
       <div>likes: {blog.likes}</div>
+      <div>added by {blog.author}</div>
     </div>
   )
 }
