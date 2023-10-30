@@ -1,8 +1,10 @@
 import { useDispatch, useSelector } from 'react-redux'
 import { login, logout } from '../reducers/loginReducer'
+import { useNavigate } from 'react-router-dom'
 
 const LoginForm = () => {
   const dispatch = useDispatch()
+  const navigate = useNavigate()
 
   const loginUser = (e) => {
     e.preventDefault()
@@ -13,6 +15,7 @@ const LoginForm = () => {
     e.target.password.value = ''
 
     dispatch(login({ username, password }))
+    navigate('/')
   }
 
   const logoutUser = (e) => {
@@ -24,7 +27,7 @@ const LoginForm = () => {
 
   return !user ? (
     <div>
-      <h2>Log in to application</h2>
+      <h2>login</h2>
       <form onSubmit={loginUser}>
         <div>
           username
@@ -38,14 +41,9 @@ const LoginForm = () => {
       </form>
     </div>
   ) : (
-    <div>
-      {user.username} is logged in
-      <div>
-        <button type='submit' onClick={logoutUser}>
-          logout
-        </button>
-      </div>
-    </div>
+    <button type='submit' onClick={logoutUser}>
+      logout
+    </button>
   )
 }
 

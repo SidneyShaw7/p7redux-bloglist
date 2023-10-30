@@ -1,9 +1,12 @@
-import { useDispatch, useSelector } from 'react-redux'
+import { useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
+import Togglable from './Togglable'
+import { useRef } from 'react'
+import NewBlog from './NewBlog'
 
 const Blogs = () => {
-  // const dispatch = useDispatch()
   const blogs = useSelector((state) => state.blogs)
+  const user = useSelector((state) => state.login)
 
   const blogStyle = {
     paddingTop: 10,
@@ -13,9 +16,23 @@ const Blogs = () => {
     marginBottom: 5,
   }
 
+  const blogFormRef = useRef()
+
+  const blogForm = () => {
+    return (
+      user && (
+        <div>
+          <Togglable buttonLabel='create new blog' ref={blogFormRef}>
+            <NewBlog />
+          </Togglable>
+        </div>
+      )
+    )
+  }
+
   return (
     <div>
-      <h2>blogs</h2>
+      {blogForm()}
       {blogs.map((blog) => {
         return (
           <div style={blogStyle} key={blog.id}>
