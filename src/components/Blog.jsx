@@ -1,6 +1,7 @@
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import { deleteBlog, likeBlog } from '../reducers/blogReducer'
+import Comments from './Comments'
 
 const Blog = () => {
   const dispatch = useDispatch()
@@ -27,6 +28,7 @@ const Blog = () => {
       {user.id === blog.user.id && (
         <button onClick={() => dispatch(deleteBlog(blog.id))}>delete</button>
       )}
+      <Comments blog={blog} />
     </div>
   ) : (
     <div>
@@ -34,6 +36,7 @@ const Blog = () => {
       <div>{blog.url}</div>
       <div>likes: {blog.likes}</div>
       <div>added by {blog.author}</div>
+      <Comments id={blog.id} />
     </div>
   )
 }

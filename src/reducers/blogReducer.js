@@ -21,6 +21,9 @@ const blogSlice = createSlice({
       const id = action.payload
       return state.filter((b) => b.id !== id)
     },
+    // newComment(state, action) {
+
+    // }
   },
 })
 
@@ -59,6 +62,24 @@ export const likeBlog = (blog) => {
     try {
       await blogService.update(blog.id, likedBlog)
       dispatch(updateBlog(likedBlog))
+    } catch (error) {
+      console.error(error)
+    }
+  }
+}
+
+export const createComment = (blog, newComment) => {
+  return async (dispatch) => {
+    console.log(blog)
+    console.log(newComment)
+
+    // const commentedBlog = {
+    //   ...blog,
+    //   comments: blog.comments.concat(newComment),
+    // }
+    try {
+      await blogService.createComment(blog.blog.id, blog.text)
+      // dispatch(updateBlog(commentedBlog))
     } catch (error) {
       console.error(error)
     }
