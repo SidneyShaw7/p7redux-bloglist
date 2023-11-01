@@ -1,20 +1,20 @@
 import { useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
-import Togglable from './Togglable'
 import { useRef } from 'react'
+import Togglable from './Togglable'
 import NewBlog from './NewBlog'
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableRow,
+  Paper,
+} from '@mui/material'
 
 const Blogs = () => {
   const blogs = useSelector((state) => state.blogs)
   const user = useSelector((state) => state.login)
-
-  const blogStyle = {
-    paddingTop: 10,
-    paddingLeft: 2,
-    border: 'solid',
-    borderWidth: 1,
-    marginBottom: 5,
-  }
 
   const blogFormRef = useRef()
 
@@ -33,13 +33,22 @@ const Blogs = () => {
   return (
     <div>
       {blogForm()}
-      {blogs.map((blog) => {
-        return (
-          <div style={blogStyle} key={blog.id}>
-            <Link to={`/blogs/${blog.id}`}>{blog.title}</Link>
-          </div>
-        )
-      })}
+      <TableContainer component={Paper}>
+        <Table>
+          <TableBody>
+            {blogs.map((blog) => {
+              return (
+                <TableRow key={blog.id}>
+                  <TableCell>
+                    <Link to={`/blogs/${blog.id}`}>{blog.title}</Link>
+                  </TableCell>
+                  <TableCell>{blog.user.name}</TableCell>
+                </TableRow>
+              )
+            })}
+          </TableBody>
+        </Table>
+      </TableContainer>
     </div>
   )
 }

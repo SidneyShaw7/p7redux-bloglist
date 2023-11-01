@@ -1,6 +1,7 @@
 import { useDispatch } from 'react-redux'
 import { createBlog } from '../reducers/blogReducer'
 import { setNotification } from '../reducers/notificationReducer'
+import { TextField, Button } from '@mui/material'
 
 const NewBlog = () => {
   const dispatch = useDispatch()
@@ -22,18 +23,24 @@ const NewBlog = () => {
   return (
     <form onSubmit={addBlog}>
       <div>
-        title:
-        <input name='title' />
+        {/* title:
+        <input name='title' /> */}
+        <TextField label='title' name='title' />
       </div>
       <div>
-        author:
-        <input name='author' />
+        {/* author:
+        <input name='author' /> */}
+        <TextField label='author' name='author' />
       </div>
       <div>
-        url:
-        <input name='url' />
+        {/* url:
+        <input name='url' /> */}
+        <TextField label='url' name='url' />
       </div>
-      <button type='submit'>create</button>
+      {/* <button type='submit'>create</button> */}
+      <Button variant='contained' color='primary' type='submit'>
+        create
+      </Button>
     </form>
   )
 }

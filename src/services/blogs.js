@@ -43,7 +43,7 @@ const createComment = async (id, newComment) => {
   const config = {
     headers: { Authorization: token },
   }
-  const response = await axios.put(
+  const response = await axios.post(
     `${baseUrl}/${id}/comments`,
     newComment,
     config

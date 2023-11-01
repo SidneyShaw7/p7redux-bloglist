@@ -1,15 +1,17 @@
-import { useSelector } from 'react-redux'
 import NewComment from './NewComment'
+import { useBlog } from '../customHooks/useBlog'
 
-const Comments = ({ blog }) => {
+const Comments = () => {
+  const blog = useBlog()
+
   console.log(blog)
   return (
     <div>
       <h3>comments</h3>
-      <NewComment blog={blog} />
+      <NewComment />
       <ul>
         {blog.comments.map((c) => {
-          return <li key={blog.id}>{c.text}</li>
+          return <li key={c.id}>{c.text}</li>
         })}
       </ul>
     </div>

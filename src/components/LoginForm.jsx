@@ -1,6 +1,7 @@
 import { useDispatch, useSelector } from 'react-redux'
 import { login, logout } from '../reducers/loginReducer'
 import { useNavigate } from 'react-router-dom'
+import { TextField, Button } from '@mui/material'
 
 const LoginForm = () => {
   const dispatch = useDispatch()
@@ -30,14 +31,18 @@ const LoginForm = () => {
       <h2>login</h2>
       <form onSubmit={loginUser}>
         <div>
-          username
-          <input id='username' type='text' name='username' />
+          {/* username */}
+          <TextField label='username' name='username' />
+          {/* <input id='username' type='text' name='username' /> */}
         </div>
         <div>
-          password
-          <input id='password' type='password' name='password' />
+          {/* password */}
+          <TextField label='password' type='password' name='password' />
+          {/* <input id='password' type='password' name='password' /> */}
         </div>
-        <button type='submit'>login</button>
+        <Button variant='contained' color='primary' type='submit'>
+          login
+        </Button>
       </form>
     </div>
   ) : (

@@ -68,18 +68,17 @@ export const likeBlog = (blog) => {
   }
 }
 
-export const createComment = (blog, newComment) => {
+export const createComment = ({ blog, text }) => {
   return async (dispatch) => {
     console.log(blog)
-    console.log(newComment)
-
+    console.log(text)
     // const commentedBlog = {
     //   ...blog,
-    //   comments: blog.comments.concat(newComment),
+    //   comments: blog.comments.concat({ text }),
     // }
     try {
-      await blogService.createComment(blog.blog.id, blog.text)
-      // dispatch(updateBlog(commentedBlog))
+      const commentedBlog = await blogService.createComment(blog.id, { text })
+      dispatch(updateBlog(commentedBlog))
     } catch (error) {
       console.error(error)
     }

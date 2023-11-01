@@ -1,16 +1,12 @@
 import { useDispatch, useSelector } from 'react-redux'
-import { useParams } from 'react-router-dom'
 import { deleteBlog, likeBlog } from '../reducers/blogReducer'
+import { useBlog } from '../customHooks/useBlog'
 import Comments from './Comments'
 
 const Blog = () => {
-  const dispatch = useDispatch()
-
-  const blogs = useSelector((state) => state.blogs)
   const user = useSelector((state) => state.login)
-
-  const id = useParams().id
-  const blog = blogs.find((u) => u.id === id)
+  const dispatch = useDispatch()
+  const blog = useBlog()
 
   if (!blog) {
     return <div>Blog not found</div>

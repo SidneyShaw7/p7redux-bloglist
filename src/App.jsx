@@ -11,6 +11,7 @@ import { Routes, Route, Link, Navigate } from 'react-router-dom'
 import User from './components/User'
 import Blogs from './components/Blogs'
 import Blog from './components/Blog'
+import { Container } from '@mui/material'
 
 const App = () => {
   const dispatch = useDispatch()
@@ -42,40 +43,42 @@ const App = () => {
   }
 
   return (
-    <div>
-      <div style={style}>
-        <Link style={padding} to={'/blogs'}>
-          blogs
-        </Link>
-        <Link style={padding} to={'/users'}>
-          users
-        </Link>
-        {user ? (
-          <em>
-            {user.username} logged in
-            <LoginForm />
-          </em>
-        ) : (
-          <Link style={padding} to='/login'>
-            login
+    <Container>
+      <div>
+        <div style={style}>
+          <Link style={padding} to={'/blogs'}>
+            blogs
           </Link>
-        )}
+          <Link style={padding} to={'/users'}>
+            users
+          </Link>
+          {user ? (
+            <em>
+              {user.username} logged in
+              <LoginForm />
+            </em>
+          ) : (
+            <Link style={padding} to='/login'>
+              login
+            </Link>
+          )}
+        </div>
+        <h2>blog demo app</h2>
+        <Notification />
+        <Routes>
+          <Route path='/users/' element={<Users />} />
+          <Route path='/users/:id' element={<User />} />
+          <Route path='/blogs/' element={<Blogs />} />
+          <Route path='/' element={<Blogs />} />
+          <Route path='/blogs/:id' element={<Blog />} />
+          <Route
+            path='/users'
+            element={user ? <Users /> : <Navigate replace to='/login' />}
+          />
+          <Route path='/login' element={<LoginForm />} />
+        </Routes>
       </div>
-      <h2>blog demo app</h2>
-      <Notification />
-      <Routes>
-        <Route path='/users/' element={<Users />} />
-        <Route path='/users/:id' element={<User />} />
-        <Route path='/blogs/' element={<Blogs />} />
-        <Route path='/' element={<Blogs />} />
-        <Route path='/blogs/:id' element={<Blog />} />
-        <Route
-          path='/users'
-          element={user ? <Users /> : <Navigate replace to='/login' />}
-        />
-        <Route path='/login' element={<LoginForm />} />
-      </Routes>
-    </div>
+    </Container>
   )
 }
 
